@@ -19,6 +19,7 @@
             $(this).removeClass('hover');
         });
     });
+    
 
 
     /* 2. Action to perform on click */
