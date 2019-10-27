@@ -1,0 +1,111 @@
+﻿@model IEnumerable<ApplicationCarRental.Models.Car>
+@using ApplicationCarRental.Models
+@{
+    ViewBag.Title = "Index";
+}
+    <head>
+        <script src="~/Scripts/Chart.min.js"></script>
+        <script src="~/Scripts/jquery-3.3.1.min.js"></script>
+        <script src="~/Scripts/bootstrap.min.js"></script>
+        <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+
+        <style>
+            #chart-container {
+                width:400px;
+                height:400px;
+                border:1px solid #ddd;
+                padding:1px;
+                border-radius:4px;
+
+            }
+        </style>
+    </head>
+
+<h3>Manage Cars</h3>
+<br />
+
+<p>
+    @Html.Partial("_CreateButtonPartial")
+</p>
+<br />
+<table class="table table-condensed table-hover">
+    <tr class="table-header">
+        <th>
+            @Html.DisplayNameFor(model => model.Rego)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Brand)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Availability)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Price)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Type.Name)
+        </th>
+        <th></th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Rego)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Brand)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Availability)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Price)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Type.Name)
+            </td>
+            <td>
+                @Html.Partial("_TableButtonPartial", new IndividualButtonPartial { CarId = item.Id })
+            </td>
+        </tr>
+    }
+
+</table>
+
+<div id="chart-container">
+    <canvas id="bar_chart"></canvas>
+
+</div>
+
+<script>
+    var repArray = @Html.Raw(Json.Encode(ViewBag.REP));
+    var typeOfCars = @Html.Raw(Json.Encode(ViewBag.Types));
+
+    var ctx = $("#bar_chart");
+    var barchart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ["Sedan", "SUV", "Coupe", "CrossOver", "Convertible", "Hatchback" ],
+            datasets: [{
+                label: "Type of Car",
+                data: repArray,
+                backgroundColor: ["rgba(242,166,54,.5)", "rgba(145,65,72,.5)", "rgba(74,25,92,.5)", "rgba(150,125,32,.5)", "rgba(100,155,52,.5)", "rgba(90,25,32,.5)"],
+                borderColor: ["rgb(242,166,54)", "rgb(145,65,72)", "rgb(74,25,92)"],
+                borderWidth:1
+            }]
+        }, 
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                xAxes: [{ ticks: { beginAtZero: true } }],
+                yAxes: [{ ticks: { beginAtZero: true } }],
+                legends: { display: true } 
+                }     
+        }
+
+    });
+</script>
+

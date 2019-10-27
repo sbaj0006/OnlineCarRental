@@ -1,0 +1,142 @@
+﻿@model ApplicationCarRental.ViewModel.CarRentalViewModel
+@using ApplicationCarRental.Utility
+@{
+    ViewBag.Title = "Index";
+}
+
+@using (Html.BeginForm("Reserve", "CarRent"))
+{
+    @Html.AntiForgeryToken();
+    <div class="row">
+        @*Car Image*@
+        <div class="col-sm-3 col-xs-4 image-car">
+            <img class="thumbnail-img" src="@Model.ImageUrl" alt="" style="width:100%;height:auto;padding:10px;" />
+        </div>
+        @*Car Name and Description*@
+        <div class="col-sm-6 col-xs-8 content-car-main">
+            <div class="content-car-brand-manu">
+                <h2><b>@Model.Brand</b></h2>
+                <h5>@Model.Manufacturer</h5>
+            </div>
+            <div>
+                <br />
+                <span>@Html.Raw(Model.Description)</span>
+            </div><br />
+        </div>
+        @*Car Price and other details*@
+        <div class="col-sm-3 col-xs-12 content-car-product-details">
+            <div>
+                @{
+                    List<SelectListItem> listItems = new List<SelectListItem>();
+                    listItems.Add(new SelectListItem
+                    {
+                        Text = SD.OneMonth,
+                        Value = SD.OneMonthCount
+                    });
+                    listItems.Add(new SelectListItem
+                    {
+                        Text = SD.TwoMonth,
+                        Value = SD.TwoMonthCount
+                    });
+                }
+                @if (Model.rentalPriceOneMonth != 0 && Model.rentalPriceTwoMonth != 0)
+                {
+                    //User is logged in
+                    <div class="form-control" style="height:350px;">
+                        <div class="input-group" style="height:30px">
+                            <label>Price</label>
+                            <label id="lblMSRP" style="font-weight:normal;">@(Model.Price)</label><br />
+                        </div>
+                        <hr />
+                        <div class="input-group" style="height:90px;">
+                            <label>Rental Price: </label><br />
+                            <label id="lblOneMonth" style="font-weight:normal;">One Month : $@(Model.rentalPriceOneMonth)</label><br />
+                            <label id="lblTwoMonth" style="font-weight:normal;">Two Months : $@(Model.rentalPriceTwoMonth)</label><br />
+                        </div>
+                        <br />
+                        <label>Select your Rental Duration:</label><br />
+                        @Html.DropDownListFor(m => m.RentalDuration, listItems, new { @class = "form-control" })
+                        <span style="font-size:12px;">Book before 3pm for same day pickup.<br /><br /></span>
+
+                        @if (Model.Availability > 0)
+                        {
+                            <button type="submit" class="btn btn-primary">
+                                <span class="glyphicon glyphicon-thumbs-up"></span> Book Car
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-danger disabled">
+                                <span class="glyphicon glyphicon-thumbs-down"></span> Unavailable
+                            </button>
+                        }
+                    </div>
+
+                }
+                else
+                {
+                    //user is not logged in
+                    <div class="form-control" style="height:150px;">
+                        <div class="input-group" style="height:30px;">
+                            <label>Price</label>
+                            <label id="lblMSRP" style="font-weight:normal;">@(Model.Price)</label><br />
+                        </div>
+                        <hr />
+                        @if (User.IsInRole(SD.AdminUserRole) && Model.Availability > 0)
+                        {
+                            @Html.ActionLink("Create Rental", "Create", "CarRent",
+                                 new { rego = Model.Rego, brand = Model.Brand }, new { @class = "btn btn-primary" })
+                        }
+                        else
+                        {
+                            if (User.IsInRole(SD.AdminUserRole) && Model.Availability == 0)
+                            {
+                                <button type="submit" disabled class="btn btn-danger">
+                                    <span class="glyphicon glyphicon-thumbs-down"></span> Unavailable
+                                </button>
+                            }
+                            else
+                            {
+                                <span>Login to unlock the rental price!</span>
+                            }
+                        }
+                    </div>
+                }
+            </div>
+            <h4 class="product-details-heading">Car Details</h4>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Rego)
+                </dt>
+                <dd>
+                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.Rego)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.FuelType)
+                </dt>
+                <dd>
+                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.FuelType)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Seats)
+                </dt>
+                <dd>
+                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.Seats)
+                </dd>
+            </dl>
+            <dl>
+                <dt>
+                    @Html.DisplayNameFor(m => m.Engine)
+                </dt>
+                <dd>
+                    &nbsp;&nbsp;&nbsp;&nbsp; @Html.DisplayFor(m => m.Engine)
+                </dd>
+            </dl>
+            @Html.HiddenFor(m => m.CarId)
+        </div>
+    </div>
+}

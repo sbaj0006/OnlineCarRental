@@ -1,0 +1,56 @@
+﻿@using ApplicationCarRental.Utility
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - My ASP.NET Application</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+   
+
+
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                @Html.ActionLink("Car Rental", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+                    <li>@Html.ActionLink("Rental Status", "Index", "CarRent")</li>
+                    @if (User.IsInRole(SD.AdminUserRole))
+                    {
+                        @Html.Partial("_AdminMenuPartial")
+
+                        <li>@Html.ActionLink("Send Email", "Send_Email", "Home")</li>
+                        <li>@Html.ActionLink("Email with Attachment", "EmailAttachment", "Home")</li>
+                    }
+                    <li>@Html.ActionLink("Our Locations", "Locations", "Home")</li>
+
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </div><div class="container body-content">
+        @RenderBody()
+        <hr />
+
+    </div>
+    <footer class="bluefooter">
+        <div class="container">
+            <p class="text-muted">Place your sticky footer here.</p>
+        </div>
+    </footer>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/carRentalJs")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

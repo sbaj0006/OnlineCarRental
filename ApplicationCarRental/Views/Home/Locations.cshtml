@@ -1,0 +1,146 @@
+﻿@{
+    ViewBag.Title = "About";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Geocoding Service</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px; /* The height is 400 pixels */
+            width: 100%; /* The width is the width of the web page */
+        }
+    </style>
+</head>
+<body>
+    <br />
+    <div id="floating-panel">
+        <input id="address" type="textbox" value="Melbourne, Australia">
+        <input id="submit" type="button" value="Search">
+    </div>
+    <div id="floating-panel">
+        <strong>Start:</strong>
+        <select id="start">
+            <option value="caulfield, melbourne">Caulfield</option>
+            <option value="st kilda, melbourne">St kilda</option>
+            <option value="camberwell, melbourne">Camberwell</option>
+            <option value="chelsea, melbourne">Chelsea</option>
+            <option value="richmond, melbourne">Richmond</option>
+        </select>
+        <br>
+        <strong>End:</strong>
+        <select id="end">
+            <option value="clayton, melbounre">Clayton</option>
+            <option value="frankston, melbourne">Frankston</option>
+            <option value="chadstone, melbourne">Chadstone</option>
+            <option value="glen waverley, melbourne">Glen Waverley</option>
+            <option value="pakenham, melbourne">Pakenham</option>
+        </select>
+    </div>
+    <div id="map"></div>
+    <script>
+        function initMap() {
+            var directionsRenderer = new google.maps.DirectionsRenderer;
+            var directionsService = new google.maps.DirectionsService;
+
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: { lat: -37.813610, lng: 144.963058 }
+            });
+
+            directionsRenderer.setMap(map);
+            directionsRenderer.setPanel(document.getElementById('right-panel'));
+
+            var control = document.getElementById('floating-panel');
+            control.style.display = 'block';
+            map.controls[google.maps.ControlPosition.TOP_CENTER].push(control);
+
+            var onChangeHandler = function () {
+                calculateAndDisplayRoute(directionsService, directionsRenderer);
+            };
+            document.getElementById('start').addEventListener('change', onChangeHandler);
+            document.getElementById('end').addEventListener('change', onChangeHandler);
+
+
+            var clayton = { lat: -37.926208, lng: 145.119553 };
+            var caulfield = { lat: -37.883000, lng: 145.022840 };
+            var docklands = { lat: -37.815868, lng: 144.945175 };
+
+            var geocoder = new google.maps.Geocoder();
+
+            var marker = new google.maps.Marker({ position: clayton, map: map })
+            var marker = new google.maps.Marker({ position: caulfield, map: map })
+            var marker = new google.maps.Marker({ position: docklands, map: map })
+            document.getElementById('submit').addEventListener('click', function () {
+                geocodeAddress(geocoder, map);
+            });
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function (position) {
+                    var pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+
+                    infoWindow.setPosition(pos);
+                    infoWindow.setContent('Location found.');
+                    infoWindow.open(map);
+                    map.setCenter(pos);
+                }, function () {
+                    handleLocationError(true, infoWindow, map.getCenter());
+                });
+            } else {
+                // Browser doesn't support Geolocation
+                handleLocationError(false, infoWindow, map.getCenter());
+            }
+        }
+            
+
+        function geocodeAddress(geocoder, resultsMap) {
+            var address = document.getElementById('address').value;
+            geocoder.geocode({ 'address': address }, function (results, status) {
+                if (status === 'OK') {
+                    resultsMap.setCenter(results[0].geometry.location);
+                    var marker = new google.maps.Marker({
+                        map: resultsMap,
+                        position: results[0].geometry.location
+                    });
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        }
+
+        function calculateAndDisplayRoute(directionsService, directionsRenderer) {
+            var start = document.getElementById('start').value;
+            var end = document.getElementById('end').value;
+            directionsService.route({
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING'
+            }, function (response, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(response);
+                } else {
+                    window.alert('Directions request failed due to ' + status);
+                }
+            });
+        }
+
+        function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+            infoWindow.setPosition(pos);
+            infoWindow.setContent(browserHasGeolocation ?
+                'Error: The Geolocation service failed.' :
+                'Error: Your browser doesn\'t support geolocation.');
+            infoWindow.open(map);
+        }
+    </script>
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyCmbHPDsCkqUyqkMPz5q_IcMxG4UhZkTrA&callback=initMap">
+    </script>
+</body>
+</html>

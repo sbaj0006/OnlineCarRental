@@ -1,0 +1,39 @@
+﻿@{
+    ViewBag.Title = "Contact";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Index</title>
+</head>
+<body>
+    <br />
+    <div class="row" style="border:1px solid #bbb9b9; border-radius:5px;">
+        <form role="form" enctype="multipart/form-data" method="post" action="@Url.Action("EmailAttachment","home")">
+            <br />
+            <div class="col-sm-10">
+                <div class="form-group">
+                    <label class="control-label" for="exampleInputEmail">Email address #1</label>
+                    <input type="email" name="email" class="form-control" id="exampleInputEmail" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="exampleInputEmail">Email address #2</label>
+                    <input type="email" name="email" class="form-control" id="exampleInputEmail1" placeholder="Enter email">
+                </div>
+                <div class="form-group">
+                    <label class="control-label" for="exampleInputFile">File</label>
+                    <input type="file" name="uploadfile" class="form-control" id="exampleInputFile" placeholder="Upload file">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-sm">Send Mail</button>
+                <br />
+            </div>
+        </form>
+    </div>
+    <br />
+
+</body>
+</html>
